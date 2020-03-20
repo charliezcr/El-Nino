@@ -1,0 +1,137 @@
+---
+title: "A2-Descriptive Stat"
+author: "Charlie Zheng"
+date: "3/3/2020"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(ggplot2)
+library(pastecs)
+```
+
+The “El Nino” data we analyzed in Assignment 1 was measured by 72 buoys distributed in significantly different time periods. The different properties of each buoy would introduce omitted variable bias if we would regress all of them. As a result of this, we chose only one buoy to conduct the regression analysis. We use buoy 2 for our analysis since it contains the most observations (2298 entries)
+
+```{r}
+new_elnino <- read.csv("new_elnino.csv")
+x <- c()
+for (i in 0:71){
+  x=c(x,sum(new_elnino$buoy==i))}
+which(x==max(x))
+buoy2 = new_elnino %>% filter(buoy == 2)
+buoy2 <- subset(buoy2,select = -c(diff,buoy))
+buoy2 <- na.omit(buoy2)
+buoy2$Sea.Surface.Temp <- as.numeric(buoy2$Sea.Surface.Temp)
+
+```
+The predictor variables are Zonal.Winds, Meridional Winds, Humidity and Air Temp.
+Here are the plots and descriptive statistics below. In the box-and-whisker plots, the outliers are plotted as red dots. In the scatterplots, both linear(red) and curvilinear(orange) regression are applied to the plots.
+
+Descriptive statistics of Zonal.Winds:
+
+```{r}
+getMode <- function(v) {
+  uniqv <- unique(v)
+  uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
+library(ggplot2)
+ggplot(buoy2,aes(y=buoy2$Zonal.Winds)) + 
+  geom_boxplot(color="lightblue", notch=TRUE, fill="azure", outlier.color="red", outlier.shape=20,outlier.size=4) +
+  ylab("Zonal.Winds") +
+  scale_x_discrete() +
+  ggtitle("Boxplot of Zonal.Winds")
+
+ggplot(buoy2,aes(x=Zonal.Winds,y=Sea.Surface.Temp)) + 
+  geom_point(color = "blue") +
+  xlab("Zonal.Winds") +
+  ylab("Sea.Surface.Temp") +
+  ggtitle("Scatterplot of Zonal.Winds") +
+  geom_smooth(method = "lm",color = "red") +
+  geom_smooth(color = "orange")
+
+getMode(buoy2$Zonal.Winds)
+round(stat.desc(buoy2[,5]),2)
+
+```
+
+Descriptive statistics of Meridional.Winds:
+
+```{r}
+ggplot(buoy2,aes(y=buoy2$Meridional.Winds)) + 
+  geom_boxplot(color="lightblue", notch=TRUE, fill="azure", outlier.color="red", outlier.shape=20,outlier.size=4) +
+  ylab("Meridional.Winds") +
+  scale_x_discrete() +
+  ggtitle("Boxplot of Meridional.Winds")
+  
+
+ggplot(buoy2,aes(x=Meridional.Winds,y=Sea.Surface.Temp)) + 
+  geom_point(color = "blue") +
+  xlab("Meridional.Winds") +
+  ylab("Sea.Surface.Temp") +
+  ggtitle("Scatterplot of Meridional.Winds") +
+  geom_smooth(method = "lm",color = "red") +
+  geom_smooth(color = "orange")
+
+getMode(buoy2$Meridional.Winds)
+round(stat.desc(buoy2[,6]),2)
+
+```
+
+Descriptive statistics of Humidity:
+
+```{r}
+ggplot(buoy2,aes(y=buoy2$Humidity)) + 
+  geom_boxplot(color="lightblue", notch=TRUE, fill="azure", outlier.color="red", outlier.shape=20,outlier.size=4) +
+  ylab("Humidity") +
+  scale_x_discrete() +
+  ggtitle("Boxplot of Humidity")
+
+ggplot(buoy2,aes(x=Humidity,y=Sea.Surface.Temp)) + 
+  geom_point(color = "blue") +
+  xlab("Humidity") +
+  ylab("Sea.Surface.Temp") +
+  ggtitle("Scatterplot of Humidity") +
+  geom_smooth(method = "lm",color = "red") +
+  geom_smooth(color = "orange")
+
+getMode(buoy2$Humidity)
+round(stat.desc(buoy2[,7]),2)
+```
+
+Descriptive statistics of Air.Temp:
+
+```{r}
+ggplot(buoy2,aes(y=buoy2$Air.Temp)) + 
+  geom_boxplot(color="lightblue", notch=TRUE, fill="azure", outlier.color="red", outlier.shape=20,outlier.size=4) +
+  ylab("Air.Temp") +
+  scale_x_discrete() +
+  ggtitle("Boxplot of Humidity")
+
+ggplot(buoy2,aes(x=Air.Temp,y=Sea.Surface.Temp)) + 
+  geom_point(color = "blue") +
+  xlab("Air.Temp") +
+  ylab("Sea.Surface.Temp") +
+  ggtitle("Scatterplot of Air.Temp") +
+  geom_smooth(method = "lm",color = "red") +
+  geom_smooth(color = "orange")
+
+getMode(buoy2$Air.Temp)
+round(stat.desc(buoy2[,8]),2)
+```
+
+Descriptive statistics of Sea.Surface.Temp:
+Because Sea.Surface.Temp is the target variable, a scatterplot cannot be applied to this.
+
+```{r}
+ggplot(buoy2,aes(y=buoy2$Sea.Surface.Temp)) + 
+  geom_boxplot(color="lightblue", notch=TRUE, fill="azure", outlier.color="red", outlier.shape=20,outlier.size=4) +
+  ylab("Sea.Surface.Temp") +
+  scale_x_discrete() +
+  ggtitle("Boxplot of Sea.Surface.")
+
+getMode(buoy2$Sea.Surface.Temp)
+round(stat.desc(buoy2[,9]),2)
+```
